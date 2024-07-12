@@ -1,4 +1,4 @@
-# bookstore
+# Bookstore
 > A project for learning.
 >
 > The first one:
