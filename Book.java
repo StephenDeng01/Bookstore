@@ -1,6 +1,8 @@
-package com.msb.test06;
+package com.msb.test03;
 
-public class Book {// 书籍
+import java.io.Serializable;
+
+public class Book implements Serializable {// 书籍   加入implements serializable允许写入写出
     // 属性
     // 编号
     private int bNo;

@@ -1,5 +1,6 @@
-package com.msb.test06;
+package com.msb.test03;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;  // 导包，类似于py
 
@@ -15,9 +16,8 @@ import java.util.Scanner;  // 导包，类似于py
 ……
  */
 public class Test {
-    public static void main(String[] args) {
-        //创建一个集合，类似于列表
-        ArrayList list = new ArrayList();
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+
         while (true){
             //打印菜单
             System.out.println("欢迎来到我的project");
@@ -34,10 +34,24 @@ public class Test {
             if(choice == 1){
                 System.out.println("1、展示书籍");
                 // System.out.println(list);  // 但是其实这里显示的效果并不好，所以换一种方式
-                for (int i = 0; i < list.size(); i++){
-                    Book b = (Book) (list.get(i));  // 这里使用了强制类型转换，转换的方法子和C语言是类似的
-                    System.out.println(b.getbNo() + "---" + b.getbName() + "---" + b.getbAuthour());
+
+                File f = new File("Bookstore.txt");
+
+                if(f.exists()==true){
+                    FileInputStream fis = new FileInputStream(f);
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+
+                    ArrayList list = (ArrayList)(ois.readObject());
+                    fis.close();// 关闭文件
+
+                    for (int i = 0; i < list.size(); i++){
+                        Book b = (Book) (list.get(i));  // 这里使用了强制类型转换，转换的方法子和C语言是类似的
+                        System.out.println(b.getbNo() + "---" + b.getbName() + "---" + b.getbAuthour());
+                    }
+                }else{
+                    System.out.println("当前没有书籍，且待更新哦。");
                 }
+
             }
             if(choice == 2){
                 System.out.println("2、上新书籍");
@@ -54,22 +68,49 @@ public class Test {
                 b.setbName(bName);
                 b.setbAuthour(bAuthor);
 
-                // 将书籍加入列表
-                list.add(b);
+                // 创建一个磁盘文件用于记录
+                File f = new File("Bookstore.txt");
+                if(f.exists()==true){
+                    FileInputStream fis = new FileInputStream(f);
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    ArrayList list = (ArrayList)(ois.readObject());
+                    ois.close();// 关闭文件
+                    list.add(b);
+                    FileOutputStream fos = new FileOutputStream(f);   // 用于读写文件
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);   // 序列化文件
+                    oos.writeObject(list);
+                    //关闭流
+                    oos.close();
+                }else {
+                    ArrayList list = new ArrayList();
+                    //需要流
+                    FileOutputStream fos = new FileOutputStream(f);   // 用于读写文件
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);   // 序列化文件
+                    list.add(b);
+                    //将list写出
+                    oos.writeObject(list);
+                    //关闭流
+                    oos.close();
+                }
             }
             if(choice == 3){
                 System.out.println("3、下架书籍");
-                // 以编号为标准：
-                System.out.println("请录入你要下架的书籍的编号：");
-                int delNo = sc.nextInt();
-                //下架编号对应的书籍：
-                for (int i = 0; i < list.size(); i++){
-                    Book b = (Book) (list.get(i));
-                    if (b.getbNo()==delNo){
-                        list.remove(b);
-                        System.out.println("书籍下架成功");
-                        break; // 下架成功就没必要继续遍历了。
-                    }
+                File f = new File("Bookstore.txt");
+                if (f.exists() == true){
+                    FileInputStream fis = new FileInputStream(f);
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    ArrayList list = (ArrayList)(ois.readObject());
+                    ois.close();
+                    System.out.println("请输入你想要移除的书籍的编号。");
+                    Scanner idx =  new Scanner(System.in);
+                    int bNo = idx.nextInt();
+                    list.remove(bNo - 1);
+                    FileOutputStream fos = new FileOutputStream(f);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(list);
+                    oos.close();
+                }else {
+                    System.out.println("还没有书籍哦，请先录入书籍吧~");
                 }
             }
             if(choice == 4){
