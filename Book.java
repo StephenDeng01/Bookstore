@@ -1,4 +1,4 @@
-package com.mab.test06;
+package com.msb.test06;
 
 public class Book {// 书籍
     // 属性
