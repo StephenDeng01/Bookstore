@@ -1,4 +1,4 @@
-package com.mab.test06;
+package com.msb.test06;
 
 import java.util.ArrayList;
 import java.util.Scanner;  // 导包，类似于py
